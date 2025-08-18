@@ -21,7 +21,7 @@ export default function WelcomeScreen() {
 
       <View style={styles.bottomBox}>
         <Text style={styles.terms}>Terms & Privacy Policy</Text>
-        <CustomButton navigateTo={'Profile'} />
+        <CustomButton navigateTo={'Profile'}>Start messaging</CustomButton>
       </View>
     </View>
   );
