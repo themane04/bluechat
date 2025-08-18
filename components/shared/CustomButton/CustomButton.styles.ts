@@ -15,4 +15,7 @@ export default StyleSheet.create({
     color: theme.colors.neutralWhite,
     textAlign: 'center',
   },
+  buttonDisabled: {
+    opacity: 0.5,
+  }
 });
