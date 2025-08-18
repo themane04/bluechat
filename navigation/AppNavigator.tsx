@@ -1,8 +1,8 @@
 import React from 'react';
-import WelcomeScreen from '../screens/welcome-screen/WelcomeScreen.tsx';
+import WelcomeScreen from '../screens/WelcomeScreen/WelcomeScreen.tsx';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import appStyles from '../App.styles';
+import styles from '../App.styles';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +13,7 @@ export default function AppNavigator() {
         initialRouteName="Welcome"
         screenOptions={{
           headerShown: false,
-          contentStyle: appStyles.container,
+          contentStyle: styles.container,
         }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
