@@ -20,6 +20,24 @@ class StorageService {
         }
     }
 
+    static async getItemById<T extends { id: string | number }>(
+        key: string,
+        id: string | number
+    ): Promise<T | null> {
+        try {
+            const jsonValue = await AsyncStorage.getItem(key);
+            if (!jsonValue) return null;
+            const items: T[] = JSON.parse(jsonValue);
+            // Find the item with the matching id
+            const item = items.find((i) => i.id === id);
+            return item ?? null;
+        } catch (e) {
+            console.error(`Error reading "${key}" by id from storage`, e);
+            return null;
+        }
+    }
+
+
     static async removeItem(key: string): Promise<void> {
         try {
             await AsyncStorage.removeItem(key);
