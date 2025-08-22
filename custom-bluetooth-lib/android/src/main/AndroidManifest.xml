@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Runtime permissions: for Android <=30 use BLUETOOTH/BLUETOOTH_ADMIN via maxSdkVersion, for Android 31+ request CONNECT/SCAN/ADVERTISE at runtime -->
+  <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+  <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Low-level Bluetooth LE feature (optional) -->
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+
+    <application />
+</manifest>

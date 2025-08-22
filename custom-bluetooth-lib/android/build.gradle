@@ -1,0 +1,17 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion = 33
+    // Required by recent Android Gradle Plugin: explicitly set the namespace here
+    namespace 'com.custombluetooth'
+    defaultConfig {
+        minSdkVersion = 24
+        targetSdkVersion = 33
+    }
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+}
