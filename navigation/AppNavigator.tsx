@@ -41,6 +41,7 @@ export default function AppNavigator() {
           component={WelcomeScreen}
         />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Chats" component={ChatSelectionScreen} />
         <Stack.Screen
           name={storageUsername}
           component={PersonalChatScreen}
@@ -50,7 +51,6 @@ export default function AppNavigator() {
             headerRight: () => <ChatHeaderIcons />,
           }}
         />
-        <Stack.Screen name="Chats" component={ChatSelectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,11 +5,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { formatDate } from '../../../utils/time/formatTime.ts';
+import { formatDate, formatTime } from '../../../utils/time/formatTime.ts';
 import ChatAudioMessageWave from '../ChatAudioMessageWave/ChatAudioMessageWave.tsx';
 import { defaultVideoThumbnail } from '../../../screens/PersonalChat/temp.ts';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { formatTime } from 'jest-util';
 import styles from './ChatFlatList.styles.ts';
 import { IChatFlatListProps } from '../../../interfaces/Chat/personalChat.ts';
 
