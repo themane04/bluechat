@@ -1,0 +1,119 @@
+{
+  "chats": [
+    {
+      "id": "c1",
+      "userId": "u1",
+      "messages": [
+        {
+          "id": "m1",
+          "from": "u1",
+          "text": "Hey! How’s your day going?",
+          "timestamp": "2025-08-22T09:00:00Z"
+        },
+        {
+          "id": "m2",
+          "from": "me",
+          "text": "Pretty good, just finished work. You?",
+          "timestamp": "2025-08-22T09:02:00Z",
+          "status": "sent"
+        },
+        {
+          "id": "m2a",
+          "from": "u1",
+          "type": "image",
+          "imageUrl": "https://picsum.photos/id/1025/800/600",
+          "caption": "Look at this sleepy dog 😴",
+          "timestamp": "2025-08-22T09:03:00Z"
+        },
+        {
+          "id": "m3",
+          "from": "u1",
+          "text": "Thinking of grabbing coffee later.",
+          "timestamp": "2025-08-22T09:05:00Z"
+        },
+        {
+          "id": "m4",
+          "from": "me",
+          "text": "Where do you want to meet?",
+          "timestamp": "2025-08-22T09:06:00Z",
+          "status": "read"
+        },
+        {
+          "id": "m4a",
+          "from": "me",
+          "type": "image",
+          "imageUrl": "https://picsum.photos/id/1043/900/600",
+          "caption": "New watch btw ⌚",
+          "timestamp": "2025-08-22T09:06:30Z",
+          "status": "read"
+        },
+        {
+          "id": "m5",
+          "from": "u1",
+          "text": "Let’s go to our usual spot.",
+          "timestamp": "2025-08-22T09:08:00Z"
+        },
+        {
+          "id": "m6",
+          "from": "me",
+          "text": "Morning! Did you sleep well?",
+          "timestamp": "2025-08-23T08:15:00Z",
+          "status": "delivered"
+        },
+        {
+          "id": "m7",
+          "from": "u1",
+          "text": "Yeah, but stayed up late watching Netflix 😂",
+          "timestamp": "2025-08-23T08:17:00Z"
+        },
+        {
+          "id": "m8",
+          "from": "u1",
+          "type": "image",
+          "imageUrl": "https://picsum.photos/id/237/700/500",
+          "caption": "My dog was keeping me awake 🐶",
+          "timestamp": "2025-08-23T08:18:00Z"
+        },
+        {
+          "id": "m9",
+          "from": "me",
+          "type": "audio",
+          "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+          "duration": "0:12",
+          "timestamp": "2025-08-23T08:20:00Z",
+          "status": "sent"
+        },
+        {
+          "id": "m10",
+          "from": "system",
+          "text": "You are now friends with Erlan Sadewa",
+          "timestamp": "2025-08-25T10:00:00Z",
+          "type": "system"
+        },
+        {
+          "id": "m11",
+          "from": "me",
+          "text": "Happy Monday! ☕",
+          "timestamp": "2025-08-25T10:05:00Z",
+          "status": "read"
+        },
+        {
+          "id": "m12",
+          "from": "u1",
+          "type": "video",
+          "thumbnailUrl": "https://picsum.photos/id/1011/900/600",
+          "videoUrl": "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+          "caption": "Check out this clip!",
+          "timestamp": "2025-08-25T10:07:00Z"
+        },
+        {
+          "id": "m13",
+          "from": "me",
+          "text": "Haha classic! 😂",
+          "timestamp": "2025-08-25T10:08:00Z",
+          "status": "read"
+        }
+      ]
+    }
+  ]
+}
