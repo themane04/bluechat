@@ -6,12 +6,12 @@ import styles from '../App.styles';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen.tsx';
 import { theme } from '../utils/styles/theme.ts';
 import PersonalChatScreen from '../screens/PersonalChat/PersonalChatScreen.tsx';
-import { storageUsername } from '../screens/PersonalChat/temp.ts';
 import HeaderBackButton from '../components/shared/Header/HeaderBackButton.tsx';
 import ChatHeaderIcons from '../components/PersonalChatScreen/Header/ChatHeaderIcons.tsx';
 import ChatSelectionScreen from '../screens/ChatSelectionScreen/ChatSelectionScreen.tsx';
+import { RootStackParamList } from '../interfaces/Shared/shared.ts';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   return (
@@ -43,13 +43,13 @@ export default function AppNavigator() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Chats" component={ChatSelectionScreen} />
         <Stack.Screen
-          name={storageUsername}
+          name={'PersonalChat'}
           component={PersonalChatScreen}
-          options={{
-            title: storageUsername,
+          options={({ route }) => ({
+            title: route.params?.username ?? 'Chat',
             // eslint-disable-next-line react/no-unstable-nested-components
             headerRight: () => <ChatHeaderIcons />,
-          }}
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

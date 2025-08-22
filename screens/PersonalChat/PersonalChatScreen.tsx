@@ -7,13 +7,14 @@ import {
 } from 'react-native';
 import styles from './PersonalChatScreen.styles.ts';
 import userChats from '../../assets/mock/userChats.json';
-import { CHAT_ID, INPUT_BAR_HEIGHT, STORAGE_KEY } from './temp.ts';
+import { INPUT_BAR_HEIGHT, STORAGE_KEY } from './temp.ts';
 import { useEffect, useRef, useState } from 'react';
 import StorageService from '../../services/LocalStorage/storage.ts';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChatFlatList from '../../components/PersonalChatScreen/ChatFlatList/ChatFlatList.tsx';
 import PersonalChatInputFooter from '../../components/PersonalChatScreen/PersonalChatInputFooter/PersonalChatInputFooter.tsx';
+import { useRoute } from '@react-navigation/core';
 
 export default function PersonalChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -23,21 +24,25 @@ export default function PersonalChatScreen() {
   const insets = useSafeAreaInsets();
   const isIOS = Platform.OS === 'ios';
   const [kbHeight, setKbHeight] = useState(0);
+  const route = useRoute();
+  const { chatId } = route.params as {
+    chatId: string;
+  };
 
   useEffect(() => {
     (async () => {
       const stored = await StorageService.getItem<any[]>(STORAGE_KEY);
       if (stored && Array.isArray(stored)) {
-        const chat = stored.find(c => c.id === CHAT_ID);
+        const chat = stored.find(c => c.id === chatId);
         setMessages(sortByTime(chat?.messages ?? []));
       } else {
         const initial = userChats.chats;
         await StorageService.setItem(STORAGE_KEY, initial);
-        const chat = initial.find(c => c.id === CHAT_ID);
+        const chat = initial.find(c => c.id === chatId);
         setMessages(sortByTime(chat?.messages ?? []));
       }
     })();
-  }, []);
+  }, [chatId]);
 
   const sortByTime = (arr: any[]) =>
     [...arr].sort(
@@ -81,7 +86,7 @@ export default function PersonalChatScreen() {
       (await StorageService.getItem<any[]>(STORAGE_KEY)) ?? userChats.chats;
     console.log('[handleSend] Loaded chats from storage:', chats.length);
 
-    const idx = chats.findIndex(c => c.id === CHAT_ID);
+    const idx = chats.findIndex(c => c.id === chatId);
     if (idx >= 0) {
       chats[idx] = {
         ...chats[idx],
@@ -91,7 +96,7 @@ export default function PersonalChatScreen() {
         `[handleSend] Appended message to existing chat at index ${idx}`,
       );
     } else {
-      chats.push({ id: CHAT_ID, userId: 'u1', messages: [newMsg] });
+      chats.push({ id: chatId, userId: 'u1', messages: [newMsg] });
       console.log('[handleSend] Created new chat with first message');
     }
 
