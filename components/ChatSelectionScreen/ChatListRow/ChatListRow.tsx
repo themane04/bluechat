@@ -2,8 +2,6 @@ import styles from './ChatListRow.styles.ts';
 import { Image, Pressable, Text, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { ChatProps } from '../../../interfaces/Chat/chat.ts';
-import StorageService from '../../../services/LocalStorage/storage.ts';
-import { User } from '../../../interfaces/User/user.ts';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../interfaces/Shared/shared.ts';
@@ -12,7 +10,6 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Chats'>;
 
 export default function ChatListRow({ chat }: ChatProps) {
   const [initials, setInitials] = React.useState<string>('');
-  const [username, setUsername] = React.useState<string | undefined>();
   const navigation = useNavigation<Nav>();
 
   useEffect(() => {
@@ -23,7 +20,7 @@ export default function ChatListRow({ chat }: ChatProps) {
         .join('')
         .slice(0, 2),
     );
-  }, []);
+  }, [chat?.username]);
 
   const selectChat = () => {
     navigation.navigate('PersonalChat', {
@@ -39,7 +36,9 @@ export default function ChatListRow({ chat }: ChatProps) {
         <Text style={styles.avatarText}>{initials}</Text>
         <View style={styles.chatTextContainer}>
           <Text style={styles.userNameText}>{chat.username}</Text>
-          <Text style={styles.statusText}>{chat.lastSeen >= Date.now() - 60 * 1000 ? 'Online' : 'Offline'}</Text>
+          <Text style={styles.statusText}>
+            {chat.lastSeen >= Date.now() - 60 * 1000 ? 'Online' : 'Offline'}
+          </Text>
         </View>
       </View>
     </Pressable>

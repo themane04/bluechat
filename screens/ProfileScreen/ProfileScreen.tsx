@@ -3,34 +3,35 @@ import { TextInput, ToastAndroid, View } from 'react-native';
 import profileScreenStyles from './ProfileScreen.styles.ts';
 import CustomButton from '../../components/shared/CustomButton/CustomButton.tsx';
 import StorageService from '../../services/LocalStorage/storage.ts';
-import { User } from '../../interfaces/User/user.ts';
-import bluetoothService from '../../services/bluetoothService.js';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../interfaces/Shared/shared.ts';
+import bluetoothService from '../../services/Bluetooth/bluetoothService';
 
 export default function ProfileScreen() {
-    const [text, setText] = React.useState('');
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Profile'>>();
-    const handleSaveUsername = () => {
-        StorageService.setItem<String>("username", text).then(() => {
-            bluetoothService.SetName(text);
-            bluetoothService.RestartAdvertising();
-            ToastAndroid.show("User updated successfully", ToastAndroid.SHORT);
-        }).catch(() => {
-            ToastAndroid.show("Error updating user", ToastAndroid.SHORT);
-        });
-    }
-
-    React.useEffect(() => {
-      StorageService.getItem<string>("username").then(username => {
-        if (username) {
-          bluetoothService.SetName(username);
-          // Navigate automatically to chat list when a username already exists
-          navigation.navigate('Chats');
-        }
+  const [text, setText] = React.useState('');
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Profile'>>();
+  const handleSaveUsername = () => {
+    StorageService.setItem<String>('username', text)
+      .then(() => {
+        bluetoothService.SetName(text);
+        bluetoothService.RestartAdvertising().then();
+        ToastAndroid.show('User updated successfully', ToastAndroid.SHORT);
+      })
+      .catch(() => {
+        ToastAndroid.show('Error updating user', ToastAndroid.SHORT);
       });
-    }, []);
+  };
+
+  React.useEffect(() => {
+    StorageService.getItem<string>('username').then(username => {
+      if (username) {
+        bluetoothService.SetName(username);
+        navigation.navigate('Chats');
+      }
+    });
+  }, [navigation]);
 
   return (
     <>

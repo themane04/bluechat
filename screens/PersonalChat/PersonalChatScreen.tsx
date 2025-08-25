@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChatFlatList from '../../components/PersonalChatScreen/ChatFlatList/ChatFlatList.tsx';
 import PersonalChatInputFooter from '../../components/PersonalChatScreen/PersonalChatInputFooter/PersonalChatInputFooter.tsx';
 import { useRoute } from '@react-navigation/core';
-import bluetoothService from '../../services/bluetoothService.js';
+import bluetoothService from '../../services/Bluetooth/bluetoothService';
 
 export default function PersonalChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -56,7 +56,6 @@ export default function PersonalChatScreen() {
   const handleSend = async () => {
     const trimmed = text.trim();
     if (!trimmed) {
-      console.log('[handleSend] Empty message, skipping');
       return;
     }
 
@@ -68,26 +67,16 @@ export default function PersonalChatScreen() {
       status: 'sent',
     };
 
-    console.log('[handleSend] New message object:', newMsg);
-
     setText('');
 
-    bluetoothService.SendMessage(chatId, trimmed);
+    await bluetoothService.SendMessage(chatId, trimmed);
 
     setMessages(prev => {
-      const next = sortByTime([...prev, newMsg]);
-      console.log(
-        '[handleSend] Messages before:',
-        prev.length,
-        'after:',
-        next.length,
-      );
-      return next;
+      return sortByTime([...prev, newMsg]);
     });
 
     const chats =
       (await StorageService.getItem<any[]>(STORAGE_KEY)) ?? userChats.chats;
-    console.log('[handleSend] Loaded chats from storage:', chats.length);
 
     const idx = chats.findIndex(c => c.id === chatId);
     if (idx >= 0) {
@@ -95,20 +84,14 @@ export default function PersonalChatScreen() {
         ...chats[idx],
         messages: [...chats[idx].messages, newMsg],
       };
-      console.log(
-        `[handleSend] Appended message to existing chat at index ${idx}`,
-      );
     } else {
       chats.push({ id: chatId, userId: 'u1', messages: [newMsg] });
-      console.log('[handleSend] Created new chat with first message');
     }
 
     await StorageService.setItem(STORAGE_KEY, chats);
-    console.log('[handleSend] Saved updated chats to storage');
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        console.log('[handleSend] Scrolling to end...');
         listRef.current?.scrollToEnd?.({ animated: true });
       });
     });
@@ -163,6 +146,7 @@ export default function PersonalChatScreen() {
           keyExtractor={i => i.id}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          /* eslint-disable-next-line react-native/no-inline-styles */
           contentContainerStyle={{
             paddingTop: 6,
             paddingBottom: INPUT_BAR_HEIGHT + insets.bottom,
