@@ -16,26 +16,19 @@ export default function ChatListRow({ chat }: ChatProps) {
   const navigation = useNavigation<Nav>();
 
   useEffect(() => {
-    StorageService.getItemById<User>('users', 'me')
-      .then(user => {
-        setUsername(user?.name);
-        setInitials(
-          (user?.name ?? 'Anonymous User')
-            .split(' ')
-            .map(n => n[0]?.toUpperCase())
-            .join('')
-            .slice(0, 2),
-        );
-      })
-      .catch(error => {
-        console.error('Error fetching user data:', error);
-      });
+    setInitials(
+      (chat?.username ?? 'Anonymous User')
+        .split(' ')
+        .map(n => n[0]?.toUpperCase())
+        .join('')
+        .slice(0, 2),
+    );
   }, []);
 
   const selectChat = () => {
     navigation.navigate('PersonalChat', {
       chatId: chat.id,
-      username: username ?? 'Unknown',
+      username: chat.username ?? 'Unknown',
     });
   };
 
@@ -45,8 +38,8 @@ export default function ChatListRow({ chat }: ChatProps) {
         <Image style={styles.chatImage} />
         <Text style={styles.avatarText}>{initials}</Text>
         <View style={styles.chatTextContainer}>
-          <Text style={styles.userNameText}>{username}</Text>
-          <Text style={styles.statusText}>Online</Text>
+          <Text style={styles.userNameText}>{chat.username}</Text>
+          <Text style={styles.statusText}>{chat.lastSeen >= Date.now() - 60 * 1000 ? 'Online' : 'Offline'}</Text>
         </View>
       </View>
     </Pressable>

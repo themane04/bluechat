@@ -11,6 +11,7 @@ import { defaultVideoThumbnail } from '../../../screens/PersonalChat/temp.ts';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './ChatFlatList.styles.ts';
 import { IChatFlatListProps } from '../../../interfaces/Chat/personalChat.ts';
+import React from 'react';
 
 export default function ChatFlatList({
   item,
