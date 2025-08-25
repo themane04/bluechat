@@ -8,7 +8,7 @@ export default function WelcomeScreen() {
     <View style={styles.container}>
       <View style={styles.topBox}>
         <Image
-          source={require('../../assets/images/welcome-screen/people.png')}
+          source={require('../../assets/Images/WelcomeScreen/people.png')}
           style={styles.image}
           resizeMode="contain"
           accessible

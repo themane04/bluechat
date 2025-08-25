@@ -1,7 +1,7 @@
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { View } from 'react-native';
 import React from 'react';
-import { theme } from '../../../utils/styles/theme.ts';
+import { theme } from '../../../utils/Styles/theme.ts';
 import styles from './ChatHeaderIcons.styles.ts';
 
 export default function ChatHeaderIcons() {

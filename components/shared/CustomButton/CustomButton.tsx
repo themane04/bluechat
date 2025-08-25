@@ -1,7 +1,7 @@
 import styles from './CustomButton.styles.ts';
 import { Text, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { ICustomButtonProps } from '../../../interfaces/Shared/shared.ts';
 
 export default function CustomButton({

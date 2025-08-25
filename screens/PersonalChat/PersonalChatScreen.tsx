@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 import styles from './PersonalChatScreen.styles.ts';
-import userChats from '../../assets/mock/userChats.json';
+import userChats from '../../assets/MockData/userChats.json';
 import { INPUT_BAR_HEIGHT, STORAGE_KEY } from './temp.ts';
 import { useEffect, useRef, useState } from 'react';
 import StorageService from '../../services/LocalStorage/storage.ts';

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { formatDate, formatTime } from '../../../utils/time/formatTime.ts';
+import { formatDate, formatTime } from '../../../utils/Time/formatTime.ts';
 import ChatAudioMessageWave from '../ChatAudioMessageWave/ChatAudioMessageWave.tsx';
 import { defaultVideoThumbnail } from '../../../screens/PersonalChat/temp.ts';
 import Icon from 'react-native-vector-icons/FontAwesome';

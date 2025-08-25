@@ -2,7 +2,7 @@ import styles from './PersonalChatInputFooter.styles.ts';
 import { INPUT_BAR_HEIGHT } from '../../../screens/PersonalChat/temp.ts';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { theme } from '../../../utils/styles/theme.ts';
+import { theme } from '../../../utils/Styles/theme.ts';
 import { IPersonalChatInputFooterProps } from '../../../interfaces/Chat/personalChat.ts';
 
 export default function PersonalChatInputFooter({

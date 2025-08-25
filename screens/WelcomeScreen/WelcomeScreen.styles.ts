@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../../utils/styles/theme.ts';
+import { theme } from '../../utils/Styles/theme.ts';
 
 export default StyleSheet.create({
   container: {
@@ -35,5 +35,5 @@ export default StyleSheet.create({
     color: theme.colors.neutralOffWhite,
     textAlign: 'center',
     marginTop: 8,
-  }
+  },
 });

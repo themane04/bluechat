@@ -1,19 +1,16 @@
-import styles from './Chat.styles.ts';
+import styles from './ChatListRow.styles.ts';
 import { Image, Pressable, Text, View } from 'react-native';
 import React, { useEffect } from 'react';
-import { Chat as ChatInterface } from '../../../interfaces/Chat/chat.ts';
+import { ChatProps } from '../../../interfaces/Chat/chat.ts';
 import StorageService from '../../../services/LocalStorage/storage.ts';
 import { User } from '../../../interfaces/User/user.ts';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../interfaces/Shared/shared.ts';
 
-type ChatProps = {
-  chat: ChatInterface;
-};
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Chats'>;
 
-export default function Chat({ chat }: ChatProps) {
+export default function ChatListRow({ chat }: ChatProps) {
   const [initials, setInitials] = React.useState<string>('');
   const [username, setUsername] = React.useState<string | undefined>();
   const navigation = useNavigation<Nav>();

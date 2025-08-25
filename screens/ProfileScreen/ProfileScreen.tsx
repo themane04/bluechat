@@ -6,14 +6,17 @@ import StorageService from '../../services/LocalStorage/storage.ts';
 import { User } from '../../interfaces/User/user.ts';
 
 export default function ProfileScreen() {
-    const [text, setText] = React.useState('');
-    const submitFunction = () => {
-        StorageService.setItem<User>("user", { id:'me', name: text }).then(() => {
-            ToastAndroid.show("User updated successfully", ToastAndroid.SHORT);
-        }).catch(() => {
-            ToastAndroid.show("Error updating user", ToastAndroid.SHORT);
-        });
-    }
+  const [text, setText] = React.useState('');
+
+  const handleSaveUsername = () => {
+    StorageService.setItem<User>('user', { id: 'me', name: text })
+      .then(() => {
+        ToastAndroid.show('User updated successfully', ToastAndroid.SHORT);
+      })
+      .catch(() => {
+        ToastAndroid.show('Error updating user', ToastAndroid.SHORT);
+      });
+  };
 
   return (
     <>
@@ -31,7 +34,7 @@ export default function ProfileScreen() {
         <CustomButton
           active={text.length > 0}
           navigateTo={'Chats'}
-          submitFunc={submitFunction}
+          submitFunc={handleSaveUsername}
         >
           Save
         </CustomButton>

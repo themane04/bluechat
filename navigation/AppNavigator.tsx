@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import styles from '../App.styles';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen.tsx';
-import { theme } from '../utils/styles/theme.ts';
+import { theme } from '../utils/Styles/theme.ts';
 import PersonalChatScreen from '../screens/PersonalChat/PersonalChatScreen.tsx';
 import HeaderBackButton from '../components/shared/Header/HeaderBackButton.tsx';
 import ChatHeaderIcons from '../components/PersonalChatScreen/Header/ChatHeaderIcons.tsx';

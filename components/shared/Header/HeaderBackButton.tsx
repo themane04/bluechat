@@ -1,6 +1,6 @@
 import Icon from 'react-native-vector-icons/FontAwesome';
 import React from 'react';
-import { theme } from '../../../utils/styles/theme.ts';
+import { theme } from '../../../utils/Styles/theme.ts';
 import { IHeaderBackButtonProps } from '../../../interfaces/Chat/personalChat.ts';
 import styles from './HeaderBackButton.styles.ts';
 
