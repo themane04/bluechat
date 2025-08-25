@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChatFlatList from '../../components/PersonalChatScreen/ChatFlatList/ChatFlatList.tsx';
 import PersonalChatInputFooter from '../../components/PersonalChatScreen/PersonalChatInputFooter/PersonalChatInputFooter.tsx';
 import { useRoute } from '@react-navigation/core';
+import bluetoothService from '../../services/bluetoothService.js';
 
 export default function PersonalChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -70,6 +71,8 @@ export default function PersonalChatScreen() {
     console.log('[handleSend] New message object:', newMsg);
 
     setText('');
+
+    bluetoothService.SendMessage(chatId, trimmed);
 
     setMessages(prev => {
       const next = sortByTime([...prev, newMsg]);

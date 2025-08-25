@@ -14,6 +14,8 @@ class BluetoothService {
         this.usernameCharacteristicUuid = 'cb16b8ba-3e58-414a-a74e-5de844436ef1';
         this.receiveMessageCharacteristicUuid = 'cb16b8ba-3e58-414a-a74e-5de844436ef2';
 
+        this.username = 'Unknown';
+
         this.connectedDevices = [];
 
         // map for custom read responses: key = serviceUUID|charUUID -> string
@@ -23,44 +25,6 @@ class BluetoothService {
         // Wrap addListener to avoid unhandled exceptions bringing down the JS VM
         const nativeModule = NativeModules.CustomBluetooth || NativeModules.BluetoothClient;
         this.eventEmitter = new NativeEventEmitter(nativeModule);
-        const safeAdd = (eventName, handler) => {
-            try {
-                this.eventEmitter.addListener(eventName, (evt) => {
-                    try { handler(evt || {}); } catch (inner) {
-                        console.log('[BluetoothService] listener error for', eventName, inner);
-                    }
-                });
-            } catch (e) {
-                console.log('[BluetoothService] failed to register listener', eventName, e);
-            }
-        };
-
-        // Data coming from peripheral write requests (module emits 'onReceiveData' already)
-        safeAdd('onReceiveData', this.onReceiveData.bind(this));
-
-        // Some native callbacks emit 'onCharacteristicRead' (read response) – previously we listened to 'onCharacteristicWrite' (mismatch)
-        safeAdd('onCharacteristicRead', (evt) => {
-            try {
-                const b64 = evt.data || '';
-                const data = this.base64ToUtf8(b64);
-                DeviceEventEmitter.emit('onConvertedData', { data, type: 'read' });
-            } catch (e) {
-                console.log('onCharacteristicRead decode error', e);
-            }
-        });
-        // Keep legacy listener in case native actually emits this name in some paths
-        safeAdd('onCharacteristicWrite', (evt) => {
-            try {
-                const b64 = evt.data || '';
-                const data = this.base64ToUtf8(b64);
-                DeviceEventEmitter.emit('onConvertedData', { data, type: 'writeEcho' });
-            } catch (e) {
-                console.log('onCharacteristicWrite decode error', e);
-            }
-        });
-        safeAdd('onConnectionStateChange', (evt) => {
-            console.log('Peripheral connection change', evt);
-        });
 
         // Simple serialized read queue to prevent overlapping read requests (which can crash some stacks)
         this._readQueue = Promise.resolve();
@@ -97,6 +61,7 @@ class BluetoothService {
 
     // base64 -> UTF-8 helper (includes a small atob polyfill)
     base64ToUtf8(b64) {
+        console.log("converting b64", b64)
         if (!b64) return '';
         const atobPolyfill = (input) => {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
@@ -104,6 +69,7 @@ class BluetoothService {
             if (input.length % 4 === 1) {
                 throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
             }
+            console.log(b64)
             let output = '';
             let bc = 0, bs, buffer, idx = 0;
             for (; (buffer = chars.indexOf(input.charAt(idx++))) !== -1;) {
@@ -112,6 +78,7 @@ class BluetoothService {
                     output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6)));
                 }
             }
+            console.log(output)
             return output;
         };
 
@@ -121,17 +88,6 @@ class BluetoothService {
             return decodeURIComponent(escape(binary));
         } catch (e) {
             return binary;
-        }
-    }
-
-    onReceiveData(event) {
-        // Native module sends base64 string in event.data
-        try {
-            const data = this.base64ToUtf8(event.data);
-            console.log('Received data:', data);
-            DeviceEventEmitter.emit('onConvertedData', { data });
-        } catch (e) {
-            console.log('onReceiveData decode error', e);
         }
     }
 
@@ -175,17 +131,21 @@ class BluetoothService {
                 1,
                 2 | 16);
                 // encode string base64 (avoid Node Buffer in RN JS runtime)
-                const b64 = this.utf8ToBase64('MY GREAT NAME');
+                const b64 = this.utf8ToBase64(this.username);
 
             // receiveMessage characteristic must be writable: permissions (READ|WRITE=1|16=17), properties (READ|WRITE|NOTIFY=2|8|16=26)
             await bt.addCharacteristicToService(this.serviceUuid, this.receiveMessageCharacteristicUuid, 1 | 16, 2 | 4 | 8 | 16);
 
             // Get message from write
-            bt.onCharacteristicWriteRequest(this.serviceUuid, this.receiveMessageCharacteristicUuid, async (device, value) => {
-                console.log("Receiving message");
+            bt.onCharacteristicWriteRequest(this.serviceUuid, this.receiveMessageCharacteristicUuid, async (deviceId, value) => {
+                console.log("Receiving message", deviceId, value);
                 try {
                     const msg = this.base64ToUtf8(value);
-                    DeviceEventEmitter.emit('onConvertedData', { data: msg, type: 'write' });
+                    console.log("converted value", msg);
+                    console.log("from device", deviceId);
+                    var msg2 = msg.split(":");
+                    var data = { device: this.connectedDevices.find(x => x.username === msg2[0]), message: msg2[1] };
+                    DeviceEventEmitter.emit('onConvertedData', data );
                     console.log("Restarting Advertising");
                     await this.RestartAdvertising();
                 } catch (e) {
@@ -373,10 +333,8 @@ class BluetoothService {
             // optionally filter by advertisement data or name
             // guard everything so no exception bubbles to native
             try {
-                console.log("found device: ", device)
                 if (!filter || (device.name && device.name.includes(filter))) {
                     var find = this.connectedDevices.find(d => d.rawScanRecord === device.rawScanRecord)
-                    console.log(this.connectedDevices)
                     if (find) {
                         find.id = device.id;
                         return;
@@ -417,8 +375,13 @@ class BluetoothService {
         this.manager.destroy();
     }
 
+    SetName(name) {
+        this.username = name;
+    }
+
     async SendMessage(deviceId, message) {
         try {
+            message = this.username + ":" + message;
             const device = this.connectedDevices.find(d => d.rawScanRecord === deviceId);
             if (!device) {
                 console.error('Device not found:', deviceId, this.connectedDevices);

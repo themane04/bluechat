@@ -1,14 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class StorageService {
-  static async setItem<T>(key: string, value: T): Promise<void> {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(key, jsonValue);
-    } catch (e) {
-      console.error(`Error saving "${key}" to storage`, e);
+    // Overloads: value or functional updater
+    static async setItem<T>(key: string, value: T): Promise<void>;
+    static async setItem<T>(key: string, updater: (prev: T | null) => T): Promise<void>;
+    static async setItem<T>(key: string, valueOrUpdater: T | ((prev: T | null) => T)): Promise<void> {
+        try {
+            let nextValue: T;
+            if (typeof valueOrUpdater === 'function') {
+                // Functional update: load previous value first
+                const prevRaw = await AsyncStorage.getItem(key);
+                let prevParsed: T | null = null;
+                if (prevRaw != null) {
+                    try { prevParsed = JSON.parse(prevRaw) as T; } catch { prevParsed = null; }
+                }
+                nextValue = (valueOrUpdater as (prev: T | null) => T)(prevParsed);
+            } else {
+                nextValue = valueOrUpdater as T;
+            }
+
+            // If updater returns undefined/null explicitly, remove the item (avoid AsyncStorage undefined error)
+            if (nextValue === undefined) {
+                await AsyncStorage.removeItem(key);
+                return;
+            }
+            const jsonValue = JSON.stringify(nextValue);
+            await AsyncStorage.setItem(key, jsonValue);
+        } catch (e) {
+            console.error(`Error saving "${key}" to storage`, e);
+        }
     }
-  }
 
   static async getItem<T>(key: string): Promise<T | null> {
     try {
