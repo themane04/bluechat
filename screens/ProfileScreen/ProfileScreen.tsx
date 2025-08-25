@@ -10,8 +10,7 @@ import bluetoothService from '../../services/Bluetooth/bluetoothService';
 
 export default function ProfileScreen() {
   const [text, setText] = React.useState('');
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Profile'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Profile'>>();
   const handleSaveUsername = () => {
     StorageService.setItem<String>('username', text)
       .then(() => {
@@ -22,7 +21,7 @@ export default function ProfileScreen() {
       .catch(() => {
         ToastAndroid.show('Error updating user', ToastAndroid.SHORT);
       });
-  };
+    };
 
   React.useEffect(() => {
     StorageService.getItem<string>('username').then(username => {

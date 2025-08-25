@@ -1,50 +1,60 @@
 import React from 'react';
-import { DeviceEventEmitter, View } from 'react-native';
+import { View, DeviceEventEmitter, NativeEventEmitter, NativeModules } from 'react-native';
 import chatSelectionScreenStyles from './ChatSelectionScreen.styles.ts';
-import { Chat as ChatInterface } from '../../interfaces/Chat/chat.ts';
+import {Chat as ChatInterface} from "../../interfaces/Chat/chat.ts";
+import Chat from '../../components/ChatSelectionScreen/ChatListRow/ChatListRow.tsx';
+import bluetoothService from '../../services/Bluetooth/bluetoothService.js';
 import StorageService from '../../services/LocalStorage/storage.ts';
-import ChatListRow from '../../components/ChatSelectionScreen/ChatListRow/ChatListRow.tsx';
 
 function mapDevice(device: any): ChatInterface {
-  return {
-    id: device.rawScanRecord,
-    username: device.username,
-    lastSeen: Date.now(),
-    messages: [],
-  };
+    const mappedChat: ChatInterface = {
+        id: device.rawScanRecord,
+        username: device.username,
+        lastSeen: Date.now(),
+        messages: [],
+        // Map other properties as needed
+    };
+    return mappedChat;
 }
 
 export default function ChatSelectionScreen() {
-  const [chatList, setChatList] = React.useState<ChatInterface[]>([]);
+    var [chatList, setChatList] = React.useState<ChatInterface[]>([]);
 
-  React.useEffect(() => {
-    StorageService.getItem<ChatInterface[]>('chats').then(storedChats => {
-      if (storedChats) {
-        setChatList(storedChats);
-      }
-    });
+    const sortChats = React.useCallback((chats: ChatInterface[]) => {
+        const now = Date.now();
+        const ONE_MIN = 60 * 1000;
+        // Separate into online (seen within last minute) and offline
+        const online = chats.filter(c => now - (c.lastSeen || 0) <= ONE_MIN);
+        const offline = chats.filter(c => now - (c.lastSeen || 0) > ONE_MIN);
+        // Sort each group by most recently seen first
+        online.sort((a,b) => (b.lastSeen||0) - (a.lastSeen||0));
+        offline.sort((a,b) => (b.lastSeen||0) - (a.lastSeen||0));
+        return [...online, ...offline];
+    }, []);
 
-    const bleSub = DeviceEventEmitter.addListener(
-      'bleDeviceFound',
-      ({ device }) => {
-        const mappedChat = mapDevice(device);
-        if (chatList.find(c => c.id === mappedChat.id)) return; // already in list
-        setChatList(prevChats => [...prevChats, mappedChat]);
-      },
+    React.useEffect(() => {
+        StorageService.getItem<ChatInterface[]>("chats").then(storedChats => {
+            if (storedChats) {
+                setChatList(sortChats(storedChats));
+            }
+        });
+
+        const newDevice = DeviceEventEmitter.addListener('newDeviceFound', ({ devices }) => {
+            setChatList(sortChats(devices));
+        });
+
+        return () => {
+            newDevice.remove();
+        };
+    }, []);
+
+    return (
+        <>
+            <View style={chatSelectionScreenStyles.container}>
+                {chatList.map((chat: ChatInterface) => (
+                    <Chat key={chat.id} chat={chat}/>
+                ))}
+            </View>
+        </>
     );
-
-    return () => {
-      bleSub.remove();
-    };
-  }, [chatList]);
-
-  return (
-    <>
-      <View style={chatSelectionScreenStyles.container}>
-        {chatList.map((chat: ChatInterface) => (
-          <ChatListRow key={chat.id} chat={chat} />
-        ))}
-      </View>
-    </>
-  );
 }
