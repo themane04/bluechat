@@ -77,7 +77,6 @@ export default function ChatFlatList({
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.videoContainer}
-                onPress={() => console.log('open player with', item.videoUrl)}
               >
                 <ImageBackground
                   source={{
