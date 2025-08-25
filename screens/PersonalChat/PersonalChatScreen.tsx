@@ -15,7 +15,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChatFlatList from '../../components/PersonalChatScreen/ChatFlatList/ChatFlatList.tsx';
 import PersonalChatInputFooter from '../../components/PersonalChatScreen/PersonalChatInputFooter/PersonalChatInputFooter.tsx';
 import { useRoute } from '@react-navigation/core';
-import bluetoothService from '../../services/Bluetooth/bluetoothService';
+import bluetoothService from '../../services/Bluetooth/bluetoothService.js';
+import { DeviceEventEmitter } from 'react-native';
+import { Chat } from '../../interfaces/Chat/chat.ts';
 
 export default function PersonalChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -32,7 +34,7 @@ export default function PersonalChatScreen() {
 
   useEffect(() => {
     (async () => {
-      const stored = await StorageService.getItem<any[]>(STORAGE_KEY);
+      const stored = await StorageService.getItem<Chat[]>(STORAGE_KEY);
       if (stored && Array.isArray(stored)) {
         const chat = stored.find(c => c.id === chatId);
         setMessages(sortByTime(chat?.messages ?? []));
@@ -43,6 +45,15 @@ export default function PersonalChatScreen() {
         setMessages(sortByTime(chat?.messages ?? []));
       }
     })();
+
+    const newMessageReceived = DeviceEventEmitter.addListener('messageReceived', (chat) => {
+      if (chat.id !== chatId) return;
+      setMessages(sortByTime(chat.messages ?? []));
+    });
+
+    return () => {
+      newMessageReceived.remove();
+    };
   }, [chatId]);
 
   const sortByTime = (arr: any[]) =>

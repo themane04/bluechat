@@ -17,51 +17,48 @@ function mapDevice(device: any): ChatInterface {
 
 export default function App() {
   React.useEffect(() => {
-    StorageService.getItem<string>('username').then(username => {
+    StorageService.getItem<string>("username").then(username => {
       if (username) {
         BluetoothService.SetName(username);
+        // Navigate automatically to chat list when a username already exists
       }
     });
 
     BluetoothService.startScan();
-    BluetoothService.StartAdvertising().then();
+    BluetoothService.StartAdvertising();
 
-    const ble = DeviceEventEmitter.addListener(
-      'bleDeviceFound',
-      ({ device }) => {
-        device.lastSeen = Date.now();
-        const mappedChat = mapDevice(device);
-        StorageService.setItem('chats', (prevChats: ChatInterface[]) => {
-          if (!prevChats.find(chat => chat.id === mappedChat.id)) {
-            return [...prevChats, mappedChat];
-          } else {
-            return prevChats.map(chat =>
-              chat.id === mappedChat.id ? mappedChat : chat,
-            );
-          }
-        }).then();
-      },
-    );
+    const ble = DeviceEventEmitter.addListener('bleDeviceFound', ({ device }) => {
+      device.lastSeen = Date.now();
+      const mappedChat = mapDevice(device);
+      StorageService.setItem("chats", (prevChats : ChatInterface[]) => {
+        if (!prevChats.find(chat => chat.id === mappedChat.id)) {
+          return [...prevChats, mappedChat];
+        } else {
+          return prevChats.map(chat => chat.id === mappedChat.id ? mappedChat : chat);
+        }
+      });
+      DeviceEventEmitter.emit('newDevice', StorageService.getItem("chats"));
+    });
 
-    const messageReceived = DeviceEventEmitter.addListener(
-      'onConvertedData',
-      data => {
-        StorageService.setItem('chats', (prevChats: ChatInterface[]) => {
-          const chat = prevChats.find(
-            ch => ch.id === data.device.rawScanRecord,
-          );
-          if (chat) {
-            const message: Message = {
-              from: data.device.rawScanRecord,
-              text: data.message,
-              timestamp: Date.now(),
-            };
-            chat.messages.push(message);
+    const messageReceived = DeviceEventEmitter.addListener('onConvertedData', async (data) => {
+      var msgs : Message[] = [];
+      await StorageService.setItem("chats", (prevChats : ChatInterface[]) => {
+        const chat = prevChats.find(chat => chat.id === data.device.rawScanRecord);
+        if (chat) {
+          var message : Message = {
+            from: data.device.rawScanRecord,
+            text: data.message,
+            timestamp: Date.now()
           }
-          return prevChats;
-        }).then();
-      },
-    );
+          chat.messages.push(message);
+          msgs = chat.messages;
+        }
+        return prevChats;
+      });
+      var newChatObj = mapDevice(data.device);
+      newChatObj.messages = msgs;
+      DeviceEventEmitter.emit('messageReceived', newChatObj);
+    });
 
     return () => {
       ble.remove();
