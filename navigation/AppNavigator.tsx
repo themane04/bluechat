@@ -48,7 +48,7 @@ export default function AppNavigator() {
           options={({ route }) => ({
             title: route.params?.username ?? 'Chat',
             // eslint-disable-next-line react/no-unstable-nested-components
-            headerRight: () => <ChatHeaderIcons />,
+            headerRight: () => <ChatHeaderIcons />
           })}
         />
       </Stack.Navigator>

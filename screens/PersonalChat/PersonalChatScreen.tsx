@@ -150,38 +150,36 @@ export default function PersonalChatScreen() {
       behavior={isIOS ? 'padding' : undefined}
       keyboardVerticalOffset={isIOS ? headerHeight : 0}
     >
-      <View>
-        <FlatList
-          ref={listRef}
-          data={messages}
-          keyExtractor={i => i.id}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          /* eslint-disable-next-line react-native/no-inline-styles */
-          contentContainerStyle={{
-            paddingTop: 6,
-            paddingBottom: INPUT_BAR_HEIGHT + insets.bottom,
-          }}
-          ListFooterComponent={
-            <View style={{ height: Math.max(kbHeight - insets.bottom, 0) }} />
-          }
-          onLayout={handleListLayout}
-          extraData={messages}
-          renderItem={({ item, index }) => {
-            return (
-              <ChatFlatList item={item} index={index} messages={messages} />
-            );
-          }}
-        />
-        <PersonalChatInputFooter
-          insets={insets}
-          kbHeight={kbHeight}
-          text={text}
-          setText={setText}
-          scrollToBottom={scrollToBottom}
-          handleSend={handleSend}
-        />
-      </View>
+      <FlatList
+        ref={listRef}
+        data={messages}
+        keyExtractor={i => i.id}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: messages.length ? "flex-start" : "flex-end",
+          paddingTop: 6,
+          paddingBottom: INPUT_BAR_HEIGHT + insets.bottom,
+        }}
+        ListFooterComponent={
+          <View style={{ height: Math.max(kbHeight - insets.bottom, 0) }} />
+        }
+        onLayout={handleListLayout}
+        extraData={messages}
+        renderItem={({ item, index }) => (
+          <ChatFlatList item={item} index={index} messages={messages} />
+        )}
+      />
+
+      <PersonalChatInputFooter
+        insets={insets}
+        kbHeight={kbHeight}
+        text={text}
+        setText={setText}
+        scrollToBottom={scrollToBottom}
+        handleSend={handleSend}
+      />
     </KeyboardAvoidingView>
   );
 }

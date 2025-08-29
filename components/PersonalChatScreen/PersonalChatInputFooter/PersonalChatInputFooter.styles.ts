@@ -16,7 +16,12 @@ export default StyleSheet.create({
     gap: 10,
   },
   plusBtn: {
-    marginRight: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+  },
+  plusIcon: {
+    fontSize: theme.sizes.headerIconSize,
+    color: theme.colors.neutralDisabled,
   },
   input: {
     flex: 1,
@@ -31,8 +36,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   sendBtn: {
-    marginLeft: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
   },
+  planeIcon:{
+    fontSize: theme.sizes.headerIconSize,
+    color: theme.colors.brandColorDarkMode,
+  }
 });

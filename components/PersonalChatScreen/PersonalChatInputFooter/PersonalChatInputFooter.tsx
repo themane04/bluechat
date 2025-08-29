@@ -2,7 +2,6 @@ import styles from './PersonalChatInputFooter.styles.ts';
 import { INPUT_BAR_HEIGHT } from '../../../screens/PersonalChat/temp.ts';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { theme } from '../../../utils/Styles/theme.ts';
 import { IPersonalChatInputFooterProps } from '../../../interfaces/Chat/personalChat.ts';
 
 export default function PersonalChatInputFooter({
@@ -25,11 +24,7 @@ export default function PersonalChatInputFooter({
       ]}
     >
       <TouchableOpacity style={styles.plusBtn}>
-        <Icon
-          name="plus"
-          size={theme.sizes.headerIconSize}
-          color="rgba(255,255,255,0.6)"
-        />
+        <Icon name="plus" style={styles.plusIcon} />
       </TouchableOpacity>
       <TextInput
         style={styles.input}
@@ -41,11 +36,7 @@ export default function PersonalChatInputFooter({
         onFocus={scrollToBottom}
       />
       <TouchableOpacity style={styles.sendBtn} onPress={handleSend}>
-        <Icon
-          name="paper-plane"
-          size={theme.sizes.headerIconSize}
-          color={theme.colors.brandColorDarkMode}
-        />
+        <Icon name="paper-plane" style={styles.planeIcon} />
       </TouchableOpacity>
     </View>
   );
