@@ -4,3 +4,6 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autoli
 rootProject.name = 'BlueChat'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+// Include local custom Bluetooth library
+include ':custom-bluetooth-lib'
+project(':custom-bluetooth-lib').projectDir = new File(rootProject.projectDir, '../custom-bluetooth-lib/android')
