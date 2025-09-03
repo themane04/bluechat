@@ -1,243 +1,116 @@
-<div id="top">
+# BlueChat
 
-<!-- HEADER STYLE: CLASSIC -->
-<div align="center">
+BlueChat is a React Native mobile application that enables direct, peer-to-peer messaging over Bluetooth Low Energy (BLE). It operates entirely offline, allowing users to discover and communicate with others nearby without needing an internet connection or cellular data.
 
-# BLUECHAT
+The application features a custom native Android module for BLE advertising and GATT server functionalities, combined with a cross-platform client for scanning, connecting, and exchanging messages.
 
-<em>Connect Instantly, Communicate Limitlessly, Innovate Freely</em>
+## Table of Contents
 
-<!-- BADGES -->
-<em>Built with the tools and technologies:</em>
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the App](#running-the-app)
+- [Running Tests](#running-tests)
 
-<img src="https://img.shields.io/badge/JSON-000000.svg?style=flat&logo=JSON&logoColor=white" alt="JSON">
-<img src="https://img.shields.io/badge/Markdown-000000.svg?style=flat&logo=Markdown&logoColor=white" alt="Markdown">
-<img src="https://img.shields.io/badge/npm-CB3837.svg?style=flat&logo=npm&logoColor=white" alt="npm">
-<img src="https://img.shields.io/badge/Swift-F05138.svg?style=flat&logo=Swift&logoColor=white" alt="Swift">
-<img src="https://img.shields.io/badge/Prettier-F7B93E.svg?style=flat&logo=Prettier&logoColor=black" alt="Prettier">
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=flat&logo=JavaScript&logoColor=black" alt="JavaScript">
-<img src="https://img.shields.io/badge/Gradle-02303A.svg?style=flat&logo=Gradle&logoColor=white" alt="Gradle">
-<img src="https://img.shields.io/badge/React-61DAFB.svg?style=flat&logo=React&logoColor=black" alt="React">
-<br>
-<img src="https://img.shields.io/badge/XML-005FAD.svg?style=flat&logo=XML&logoColor=white" alt="XML">
-<img src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=flat&logo=TypeScript&logoColor=white" alt="TypeScript">
-<img src="https://img.shields.io/badge/Facebook-0866FF.svg?style=flat&logo=Facebook&logoColor=white" alt="Facebook">
-<img src="https://img.shields.io/badge/bat-31369E.svg?style=flat&logo=bat&logoColor=white" alt="bat">
-<img src="https://img.shields.io/badge/ESLint-4B32C3.svg?style=flat&logo=ESLint&logoColor=white" alt="ESLint">
-<img src="https://img.shields.io/badge/Kotlin-7F52FF.svg?style=flat&logo=Kotlin&logoColor=white" alt="Kotlin">
-<img src="https://img.shields.io/badge/Podman-892CA0.svg?style=flat&logo=Podman&logoColor=white" alt="Podman">
-<img src="https://img.shields.io/badge/Jest-C21325.svg?style=flat&logo=Jest&logoColor=white" alt="Jest">
+## Features
 
-</div>
-<br>
+- **Offline Peer-to-Peer Messaging:** Communicate directly with nearby devices using Bluetooth Low Energy.
+- **Cross-Platform:** Built with React Native for both Android and iOS.
+- **Custom BLE Server (Android):** A native Android module implements a GATT server to advertise user profiles and handle incoming message data.
+- **Device Discovery:** Scans for and displays nearby BlueChat users.
+- **User Profiles:** Set a username that is advertised to other users.
+- **Persistent Chat History:** Chat messages are saved locally on your device using `@react-native-async-storage/async-storage`.
+- **Modern UI:** A clean, component-based interface built with React Navigation and custom-styled components.
+- **Type-Safe Codebase:** Developed with TypeScript for enhanced code quality and maintainability.
 
----
+## How It Works
 
-## 📄 Table of Contents
+BlueChat leverages Bluetooth Low Energy for communication. Each device acts as both a BLE server (peripheral) and a client (central).
 
-- [Overview](#-overview)
-- [Getting Started](#-getting-started)
-    - [Prerequisites](#-prerequisites)
-    - [Installation](#-installation)
-    - [Usage](#-usage)
-    - [Testing](#-testing)
-- [Features](#-features)
-- [Project Structure](#-project-structure)
-- [Acknowledgment](#-acknowledgment)
+1.  **Advertising (Server):** The application uses a custom Android native module (`custom-bluetooth-lib`) to act as a **GATT Server**. It advertises a specific service UUID. A characteristic within this service exposes the user's chosen username.
+2.  **Scanning (Client):** The app uses `react-native-ble-plx` to scan for other devices advertising the same service UUID. When a device is found, it connects and reads the username characteristic to identify the user.
+3.  **Messaging:** To send a message, the client writes data to a specific `receiveMessageCharacteristicUuid` on the recipient's device. The recipient's app, listening for write requests on its GATT server, receives the data, decodes it, and displays it in the chat UI.
 
----
+This dual-role architecture allows for decentralized, two-way communication between any two devices running the app.
 
-## ✨ Overview
+## Project Structure
 
-BlueChat is an open-source React Native framework for building Bluetooth-enabled messaging applications with a focus on modularity and scalability. It integrates custom Bluetooth functionalities, flexible UI components, and comprehensive configuration to streamline development.
+The codebase is organized into a modular structure, separating concerns for UI, services, navigation, and native code.
 
-**Why BlueChat?**
-
-This project simplifies the creation of real-time, Bluetooth-based chat apps by providing:
-
-- 🧩 **Modular Components:** Reusable UI elements like chat bubbles, headers, and input footers for rapid development.
-- 🔧 **Custom Bluetooth Library:** Seamless device scanning, advertising, and communication across Android and iOS.
-- 🎯 **Cross-Platform Native Integration:** Native modules and configurations ensure smooth performance on both platforms.
-- 📦 **TypeScript Support:** Ensures type safety and maintainability across the codebase.
-- 🚀 **Config-Driven Architecture:** Centralized configs for bundling, styling, and environment management.
-- 🛠️ **Robust Testing Setup:** Mocks and unit tests to guarantee reliability and quality.
-
----
-
-## 📌 Features
-
-|      | Component       | Details                                                                                     |
-| :--- | :-------------- | :------------------------------------------------------------------------------------------ |
-| ⚙️  | **Architecture**  | <ul><li>Multi-platform mobile app using React Native</li><li>Native modules in Java, Kotlin, Swift</li><li>Shared codebase with TypeScript and JavaScript</li></ul> |
-| 🔩 | **Code Quality**  | <ul><li>Uses ESLint, Prettier for code formatting and linting</li><li>TypeScript for type safety</li><li>Modular folder structure separating platform-specific and shared code</li></ul> |
-| 📄 | **Documentation** | <ul><li>Podfile for iOS dependencies</li><li>README likely includes setup instructions</li><li>Comments and annotations in codebase</li></ul> |
-| 🔌 | **Integrations**  | <ul><li>React Native ecosystem (react-native, react-navigation, react-native-ble-plx)</li><li>Build tools: Gradle, npm, bundler</li><li>Native SDKs via CocoaPods (Podfile)</li></ul> |
-| 🧩 | **Modularity**    | <ul><li>Separate modules for Bluetooth, UI, and platform-specific code</li><li>Custom Bluetooth library in `custom-bluetooth-lib`</li><li>Configurable via package.json and build.gradle files</li></ul> |
-| 🧪 | **Testing**       | <ul><li>Uses Jest, @testing-library/react-native, @testing-library/jest-native</li><li>Unit tests for components and logic</li><li>Test scripts configured in package.json</li></ul> |
-| ⚡️  | **Performance**   | <ul><li>Uses ProGuard for code shrinking and obfuscation in Android</li><li>Native modules for performance-critical features like Bluetooth</li><li>Optimized build configurations with Gradle</li></ul> |
-| 🛡️ | **Security**      | <ul><li>Includes privacy info via `privacyinfo.xcprivacy`</li><li>Keystore and debug keystore for signing Android apps</li><li>Potential use of secure storage (e.g., AsyncStorage with encryption)</li></ul> |
-| 📦 | **Dependencies**  | <ul><li>Package managers: npm, bundler, Gradle, Gemfile</li><li>Core dependencies: React Native, react-navigation, react-native-ble-plx</li><li>Native dependencies via Podfile and build.gradle</li></ul> |
-
----
-
-## 📁 Project Structure
-
-```sh
-└── bluechat/
-    ├── App.styles.ts
-    ├── App.tsx
-    ├── Gemfile
-    ├── README.md
-    ├── __mocks__
-    │   ├── @react-native-async-storage
-    │   └── fileMock.js
-    ├── __tests__
-    │   ├── App.test.tsx
-    │   ├── ChatSelectionScreen.test.tsx
-    │   ├── ProfileScreen.test.tsx
-    │   └── WelcomeScreen.test.tsx
-    ├── android
-    │   ├── app
-    │   ├── build.gradle
-    │   ├── gradle
-    │   ├── gradle.properties
-    │   ├── gradlew
-    │   ├── gradlew.bat
-    │   └── settings.gradle
-    ├── app.json
-    ├── babel.config.js
-    ├── components
-    │   ├── ChatSelectionScreen
-    │   ├── PersonalChatScreen
-    │   └── shared
-    ├── custom-bluetooth-lib
-    │   ├── README.md
-    │   ├── android
-    │   ├── index.js
-    │   └── package.json
-    ├── index.js
-    ├── interfaces
-    │   ├── Chat
-    │   ├── Shared
-    │   └── User
-    ├── ios
-    │   ├── .xcode.env
-    │   ├── BlueChat
-    │   ├── BlueChat.xcodeproj
-    │   └── Podfile
-    ├── jest.config.js
-    ├── metro.config.js
-    ├── navigation
-    │   └── AppNavigator.tsx
-    ├── package-lock.json
-    ├── package.json
-    ├── react-native.config.js
-    ├── screens
-    │   ├── ChatSelectionScreen
-    │   ├── PersonalChat
-    │   ├── ProfileScreen
-    │   └── WelcomeScreen
-    ├── services
-    │   ├── Bluetooth
-    │   └── LocalStorage
-    ├── tsconfig.json
-    └── utils
-        ├── Styles
-        └── Time
+```
+.
+├── android/              # Android native project
+├── ios/                  # iOS native project
+├── custom-bluetooth-lib/ # Custom native module for BLE server functionality
+│   └── android/
+├── components/           # Reusable React components (Buttons, Chat Rows)
+├── navigation/           # App navigation stack (React Navigation)
+├── screens/              # Top-level screen components
+│   ├── WelcomeScreen/
+│   ├── ProfileScreen/
+│   ├── ChatSelectionScreen/
+│   └── PersonalChat/
+├── services/             # Application services (Bluetooth, Local Storage)
+├── utils/                # Shared utilities (styles, formatting)
+└── App.tsx               # Main application entry point
 ```
 
----
+## Getting Started
 
-## 🚀 Getting Started
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing.
 
-### 📋 Prerequisites
+### Prerequisites
 
-This project requires the following dependencies:
+- [Node.js](https://nodejs.org/) (v18 or newer)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+- [React Native development environment](https://reactnative.dev/docs/environment-setup) for your target platform (Android/iOS).
+  - For Android: Android Studio, JDK
+  - For iOS: Xcode, CocoaPods
+- Ruby and Bundler (for iOS dependency management).
 
-- **Programming Language:** TypeScript
-- **Package Manager:** Bundler, Npm, Gradle
-- **Container Runtime:** Podman
+### Installation
 
-### ⚙️ Installation
-
-Build bluechat from the source and install dependencies:
-
-1. **Clone the repository:**
-
+1.  **Clone the repository:**
     ```sh
-    ❯ git clone https://github.com/themane04/bluechat
+    git clone https://github.com/themane04/bluechat.git
+    cd bluechat
     ```
 
-2. **Navigate to the project directory:**
-
+2.  **Install JavaScript dependencies:**
     ```sh
-    ❯ cd bluechat
+    npm install
     ```
 
-3. **Install the dependencies:**
+3.  **Install iOS dependencies:**
+    ```sh
+    cd ios
+    pod install
+    ```
 
-**Using [bundler](https://www.ruby-lang.org/):**
+### Running the App
 
-```sh
-❯ bundle install
-```
-**Using [npm](https://www.npmjs.com/):**
+Make sure you have an emulator/simulator running or a physical device connected. The application is best tested on physical devices to use Bluetooth features.
 
-```sh
-❯ npm install
-```
-**Using [gradle](https://gradle.org/):**
+**For Android:**
 
 ```sh
-❯ gradle build
+npm run android
 ```
 
-### 💻 Usage
-
-Run the project with:
-
-**Using [bundler](https://www.ruby-lang.org/):**
+**For iOS:**
 
 ```sh
-bundle exec ruby {entrypoint}
-```
-**Using [npm](https://www.npmjs.com/):**
-
-```sh
-npm start
-```
-**Using [gradle](https://gradle.org/):**
-
-```sh
-gradle run
+npm run ios
 ```
 
-### 🧪 Testing
+## Running Tests
 
-Bluechat uses the **Jest** test framework. Run the test suite with:
+The project includes a suite of unit and component tests built with Jest and React Testing Library.
 
-**Using [bundler](https://www.ruby-lang.org/):**
-
-```sh
-bundle exec rspec
-```
-**Using [npm](https://www.npmjs.com/):**
+To run the tests, execute the following command:
 
 ```sh
 npm test
-```
-**Using [gradle](https://gradle.org/):**
-
-```sh
-gradle test
-```
-
----
-
-## ✨ Acknowledgments
-
-- Credit `contributors`, `inspiration`, `references`, etc.
-
-<div align="left"><a href="#top">⬆ Return</a></div>
-
----
